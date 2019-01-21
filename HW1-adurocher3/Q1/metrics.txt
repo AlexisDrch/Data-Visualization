@@ -1,0 +1,4 @@
+Average node degree: 1.687 
+Diameter of the graph: 9
+Average path length: 3.166
+
