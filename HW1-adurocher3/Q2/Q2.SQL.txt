@@ -141,7 +141,8 @@ CREATE VIEW good_collaboration AS
 		INNER JOIN movie_cast c2 ON c1.movie_id = c2.movie_id
 		INNER JOIN movies m ON c1.movie_id = m.id
 	GROUP BY cast_member_id1, cast_member_id2
-		HAVING cast_member_id1 > cast_member_id2 AND average_movie_score >= 40 AND movie_count >= 3;
+		HAVING cast_member_id1 > cast_member_id2 AND average_movie_score >= 40 AND movie_count >= 3
+	ORDER BY average_movie_score DESC, movie_count DESC;
 
 -- [insert your SQL statement(s) ABOVE this line]
 
@@ -158,6 +159,16 @@ SELECT AVG(average_movie_score) FROM good_collaboration;
 
 -- [insert your SQL statement(s) BELOW this line]
 
+SELECT g.cast_id, c.cast_name, AVG(g.score) collaboration_score FROM
+(
+	SELECT g1.cast_member_id1 cast_id, g1.average_movie_score score FROM good_collaboration g1
+	UNION
+	SELECT g2.cast_member_id2 cast_id, g2.average_movie_score score FROM good_collaboration g2
+) as g
+	INNER JOIN movie_cast c ON g.cast_id = c.cast_id
+GROUP BY g.cast_id
+ORDER BY collaboration_score DESC, c.cast_name
+LIMIT 5;
 
 -- [insert your SQL statement(s) ABOVE this line]
 
@@ -170,8 +181,15 @@ SELECT AVG(average_movie_score) FROM good_collaboration;
 
 -- [insert your SQL statement(s) BELOW this line]
 
+CREATE VIRTUAL TABLE movie_overview USING fts3 (
+	id INTEGER,
+	name TEXT,
+	year INTEGER,
+	overview TEXT,
+	popularity DECIMAL
+);
 
-
+.import movie-overview.txt movie_overview
 
 -- [insert your SQL statement(s) ABOVE this line]
 
@@ -181,8 +199,9 @@ SELECT AVG(average_movie_score) FROM good_collaboration;
 
 -- [insert your SQL statement(s) BELOW this line]
 
-
-
+SELECT COUNT(m.name) count_overview
+FROM movie_overview m
+WHERE m.overview MATCH "fight";
 
 -- [insert your SQL statement(s) ABOVE this line]
 
@@ -194,9 +213,9 @@ SELECT AVG(average_movie_score) FROM good_collaboration;
 -- (i.2) List movies with "love" and "story" nearby
 
 -- [insert your SQL statement(s) BELOW this line]
-
-
-
+SELECT m.id id
+FROM movie_overview m
+WHERE m.overview MATCH "love NEAR/5 story";
 
 -- [insert your SQL statement(s) ABOVE this line]
 
