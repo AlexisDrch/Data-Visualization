@@ -12,9 +12,17 @@ DROP TABLE IF EXISTS movie_overview;
 -- (a.i) Create tables
 
 -- [insert your SQL statement(s) BELOW this line]
+CREATE TABLE movies (
+	id INTEGER,
+	name TEXT,
+	score INTEGER
+);
 
-
-
+CREATE TABLE movie_cast (
+	movie_id INTEGER,
+	cast_id INTEGER,
+	cast_name TEXT
+);
 
 -- [insert your SQL statement(s) ABOVE this line]
 
@@ -27,9 +35,8 @@ DROP TABLE IF EXISTS movie_overview;
 -- (a.ii) Import data
 
 -- [insert your SQLite command(s) BELOW this line]
-
-
-
+.import movie-name-score.txt movies
+.import movie-cast.txt movie_cast
 
 -- [insert your SQLite command(s) ABOVE this line]
 
@@ -46,8 +53,9 @@ SELECT COUNT(*) FROM movie_cast;
 
 -- [insert your SQL statement(s) BELOW this line]
 
-
-
+CREATE INDEX scores_index on movies (score);
+CREATE INDEX cast_index on movie_cast (cast_id);
+CREATE INDEX movie_index on movies (id);
 
 -- [insert your SQL statement(s) ABOVE this line]
 
@@ -60,9 +68,9 @@ SELECT COUNT(*) FROM movie_cast;
 -- (c) Calculate a proportion
 
 -- [insert your SQL statement(s) BELOW this line]
-
-
-
+SELECT (COUNT(m.id) * 100.0)/(SELECT COUNT(m_tot.id) FROM movies m_tot) as prop
+	FROM movies m
+	WHERE m.score > 50;
 
 -- [insert your SQL statement(s) ABOVE this line]
 
@@ -75,8 +83,9 @@ SELECT COUNT(*) FROM movie_cast;
 
 -- [insert your SQL statement(s) BELOW this line]
 
-
-
+SELECT m.id, m.name, m.score FROM movies m
+	ORDER BY m.score DESC
+	LIMIT 7; 
 
 -- [insert your SQL statement(s) ABOVE this line]
 
@@ -89,8 +98,11 @@ SELECT COUNT(*) FROM movie_cast;
 
 -- [insert your SQL statement(s) BELOW this line]
 
-
-
+SELECT c.cast_id, c.cast_name, COUNT(c.movie_id) movie_count
+	FROM movie_cast c
+	GROUP BY c.cast_id
+	ORDER BY movie_count DESC, c.cast_name
+	LIMIT 5;
 
 -- [insert your SQL statement(s) ABOVE this line]
 
@@ -103,7 +115,13 @@ SELECT COUNT(*) FROM movie_cast;
 
 -- [insert your SQL statement(s) BELOW this line]
 
-
+SELECT c.cast_id, c.cast_name, AVG(m.score) average_score
+	FROM movie_cast c, movies m
+	WHERE m.id = c.movie_id AND m.score > 50
+	GROUP BY c.cast_id
+		HAVING COUNT(m.id) > 2
+	ORDER BY average_score DESC
+	LIMIT 10;
 
 
 -- [insert your SQL statement(s) ABOVE this line]
@@ -117,8 +135,13 @@ SELECT COUNT(*) FROM movie_cast;
 
 -- [insert your SQL statement(s) BELOW this line]
 
-
-
+CREATE VIEW good_collaboration AS
+	SELECT c1.cast_id cast_member_id1, c2.cast_id cast_member_id2, COUNT(m.id) movie_count, AVG(m.score) average_movie_score
+	FROM movie_cast c1
+		INNER JOIN movie_cast c2 ON c1.movie_id = c2.movie_id
+		INNER JOIN movies m ON c1.movie_id = m.id
+	GROUP BY cast_member_id1, cast_member_id2
+		HAVING cast_member_id1 > cast_member_id2 AND average_movie_score >= 40 AND movie_count >= 3;
 
 -- [insert your SQL statement(s) ABOVE this line]
 
@@ -134,8 +157,6 @@ SELECT AVG(average_movie_score) FROM good_collaboration;
 -- (h) Find the best collaborators
 
 -- [insert your SQL statement(s) BELOW this line]
-
-
 
 
 -- [insert your SQL statement(s) ABOVE this line]
