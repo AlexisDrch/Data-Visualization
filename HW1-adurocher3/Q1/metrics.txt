@@ -1,4 +1,9 @@
-Average node degree: 1.687 
-Diameter of the graph: 9
-Average path length: 3.166
+Average node degree: 3.373.
+The average node degree gives an idea of the average number of similar movies per movies.
+
+Diameter of the graph: 16.
+The Diameter of the graph can be translated in: the highest chain of similar movies: i.e The most other direct or chained similar movies one can reach, starting from one movie.
+
+Average path length: 5.9777.
+The average path length gives an idea of how similar each movie is to the others (directly or via chain) on average.
 

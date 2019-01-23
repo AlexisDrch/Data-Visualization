@@ -1,0 +1,1 @@
+I used the Force Atlast algorithm to improve the visibility (Repulsion strengh = 500) while keeping a compact graph (Gravity = 100). I adjusted each node's size and color proportionally to their respective PageRank score since this metric gives an overall ranking of each node's importance w.r.t to outbounds links. 
