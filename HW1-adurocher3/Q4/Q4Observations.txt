@@ -1,0 +1,6 @@
+47
+5
+566
+if(value == null, "Unbranded", value)
+if(value > 100, 1, 0)
+if(or(value.contains("offer"), value.contains("sale"), value.contains("discount")), 1, 0)
