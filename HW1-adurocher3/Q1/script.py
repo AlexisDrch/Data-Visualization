@@ -102,24 +102,5 @@ if __name__ == "__main__":
 		for pair in unique_pairs.keys():
 			fid.write(f"{pair[0]},{pair[1]}\n")
 
-	print('keys ',val)
-	print('HashMap',len(unique_pairs))
-
-
-
-
-		#print(len(results))
-
-
-
-
-	 # This will return entire content.
-	# >>> # The following example demonstrates reading data in chunks.
-	# >>> conn.request("GET", "/")
-	# >>> r1 = conn.getresponse()
-	# >>> while not r1.closed:
-	# ...     print(r1.read(200))  # 200 bytes
-	# b'<!doctype html>\n<!--[if"...
-
-	#/discover/movie?api_key=c9a9b071a445e98c64e3e970285ee656&sort_by=popularity.desc
-	#&primary_release_year=2004&with_genres=18
+	#print('keys ',val)
+	#print('HashMap',len(unique_pairs))
