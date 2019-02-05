@@ -10,9 +10,14 @@ path.link_1 {
   stroke-width: 0.75px;
 }
 
-circle {
+circle.pinned {
   fill: #ccc;
-  stroke: #fff;
+  stroke: red;
+  stroke-width: 2.5px;
+}
+
+circle.non_pinned {
+  fill: #ccc;
   stroke: black;
   stroke-width: 1.5px;
 }
