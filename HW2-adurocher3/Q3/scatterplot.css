@@ -1,0 +1,36 @@
+
+.axis path,
+.axis line {
+	fill: none;
+	stroke: black;
+	shape-rendering: crispEdges;
+}
+
+.bad_rating {
+	stroke: red;
+	stroke-width:r/6;
+	fill-opacity:0;
+}
+
+.good_rating {
+	stroke: blue;
+	stroke-width:r/6;
+	fill-opacity:0;
+}
+
+.axis text {
+	font-family: sans-serif;
+	font-size: 11px;
+}
+
+
+.legend {
+	font-family: sans-serif;
+	font-size: 10px;
+}
+
+.label {
+	font-family: sans-serif;
+	font-size: 10px;
+	text-anchor: middle;
+}
