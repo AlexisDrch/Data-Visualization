@@ -1,9 +1,12 @@
+const polygon = (x,y,r) => `${x-r/2},${y+r} ${x-r/2},${y+r/2} ${x-r},${y+r/2}
+		 ${x-r},${y-r/2} ${x-r/2},${y-r/2} ${x-r/2},${y-r}
+		 ${x+r/2},${y-r} ${x+r/2},${y-r/2} ${x+r},${y-r/2}
+		 ${x+r},${y+r/2} ${x+r/2},${y+r/2} ${x+r/2},${y+r}`;
+
 
 function scatterPlot(dataset, featureX, featureY, svg, xScale, yScale, title = 'Your scatterplot',
 	xlabel= 'X axis', ylabel= 'Y axis', w=1000, h=500, padding=100, featureSized = false) {
-	var r = 5;
-	var cross = r*2;
-	
+	var r = 6;
 	//Define X axis
 	var xAxis = d3.axisBottom()
 		.scale(xScale);
@@ -27,41 +30,17 @@ function scatterPlot(dataset, featureX, featureY, svg, xScale, yScale, title = '
 	   .attr("r",  d => {
 	   	if (featureSized) {
 	   		return rScale(d[featureSized]); 
-	   } return r})
+	   } return r;})
 
-	//Create h line for cross
-	svg.selectAll("rect.hline")
-	   .data(dataset.filter(d=>(d.IsGoodRating)))
-	   .enter()
-	   .append("rect")
-	   .attr("class", "hline good_rating")
-	   .attr("x", d => xScale(d[featureX]) - cross/2)
-	   .attr("y", d => yScale(d[featureY]) - cross/4)
-	   .attr("width", d => {
-	   	if (featureSized) {
-	   		return 2*rScale(d[featureSized]); 
-	   } return cross})
-	   .attr("height", d => {
-	   	if (featureSized) {
-	   		return rScale(d[featureSized]); 
-	   } return cross/2});
-	
-	//Create v line for cross
-	svg.selectAll("rect.vline")
-	   .data(dataset.filter(d=>(d.IsGoodRating)))
-	   .enter()
-	   .append("rect")
-	   .attr("class", "vline good_rating")
-	   .attr("x", d => xScale(d[featureX]) - cross/4)
-	   .attr("y", d => yScale(d[featureY]) - cross/2)
-	   .attr("width", d => {
-	   	if (featureSized) {
-	   		return rScale(d[featureSized]); 
-	   } return cross/2})
-	   .attr("height", d => {
-	   	if (featureSized) {
-	   		return 2*rScale(d[featureSized]); 
-	   } return cross});
+	//Create polygon for cross
+	svg.selectAll("polygon")
+		.data(dataset.filter(d=>(d.IsGoodRating)))
+		.enter()
+		.append("polygon")
+		.attr("class", "good_rating")
+		.attr("points", d => {
+			r_ = (featureSized) ? rScale(d[featureSized]): r;
+			return polygon(xScale(d[featureX]),yScale(d[featureY]),r_)}) 
 
 	//Create X axis
 	svg.append("g")
@@ -76,7 +55,7 @@ function scatterPlot(dataset, featureX, featureY, svg, xScale, yScale, title = '
 		.call(yAxis);
 
 	//Create legend
-	svg.append("text")
+	svg.append("text")// add title 
 		.text(title)
 		.attr("x", w/2 - padding/2)
 	    .attr("y", padding/2)
@@ -95,33 +74,24 @@ function scatterPlot(dataset, featureX, featureY, svg, xScale, yScale, title = '
 		.attr("y", padding/2)
 		.attr("class", "legend")
 
-	svg.append("rect")// add cross h legend
-		.attr("x", w - padding - r*2 - cross/2)
-		.attr("y", padding/2 + 10 -r/2 - cross/4)
-	   	.attr("width", cross)
-	   	.attr("height", cross/2)
+	svg.append("polygon")// add cross legend
 		.attr("class", "good_rating")
-
-	svg.append("rect")// add cross v legend
-		.attr("x", w - padding - r*2 - cross/4)
-		.attr("y", padding/2 + 10 -r/2 - cross/2)
-	   	.attr("width", cross/2)
-	   	.attr("height", cross)
-		.attr("class", "good_rating")
+		.attr("id", "zigoto")
+		.attr("points", polygon(w-padding-r*2,15+padding/2-r, r))
 	
 	svg.append("text") // add text legend
 		.text("good rating")
 		.attr("x", w - padding)
-		.attr("y", padding/2 + 10)
+		.attr("y", padding/2 + 12)
 		.attr("class", "legend")
 
-	svg.append("text")
+	svg.append("text") // add axis label
 		.text(xlabel)
 		.attr("x", w/2 - padding/2)
 	    .attr("y", h - padding/2)
 	    .attr("class", "legend")
 
-	svg.append("text")
+	svg.append("text")// add axis label
 		.text(ylabel)
 		.attr("transform", "rotate(-90)")
 		.attr("x", -h/2)
@@ -156,6 +126,8 @@ d3.csv("movies.csv", d => {
 
 	var r = 5;
 	var cross = r*2
+	x = 100;
+	y= 80;
 
 	// a.1
 	/*Feature 10 (Wins and nominations) vs. Feature 6 ( Rating)
@@ -177,7 +149,7 @@ d3.csv("movies.csv", d => {
 
 	scatterPlot(dataset, "Rating", "WinsNoms", svg, xScale_a_1, yScale_a_1,
 		"Wins+Nominations vs. Rating", "Rating", "Wins+Noms", w, h, padding);
-
+	
 	//a.1 bis
 	/*Feature 8 (Budget) vs. Features 6 ( Rating)
 		Figure title: Budget vs. Rating
@@ -260,6 +232,5 @@ d3.csv("movies.csv", d => {
 	scatterPlot(dataset_, "Rating", "WinsNoms", svg5, xScale_a_1, yScale_c_2,
 		"Wins+Nominations (log-scaled) vs. Rating", "Rating", "Wins+Noms", w, h, padding);
 	
-	console.log(dataset[0]);
 
 })
