@@ -1,0 +1,11 @@
+Q3.a.2:
+Correlation between the y axis and the label: 
+- 1st plot: Bad and good rated movies have a similar average budget. Not clear correlation
+- 2st plot: Highly rated movies have more wins and nomination. Clear correlation.
+
+The (Wins+Nominations vs. Rating) combination is, more descriptive hence the best.
+
+Q3.c.: 
+Both normalize data distribution that are skewed to the right (case of Winsoms).
+- Log scale: If strong outliers, it saturates. Gives a better general overview. Also log of 0<x<1 is negative. 
+- Sqrt root scale: Useful to reduce the variance in highly variated distribution of data (general smooth saturation).
