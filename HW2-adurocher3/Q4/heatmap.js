@@ -50,27 +50,56 @@ d3.csv("heatmap.csv", d => {
 
 	var canvas = svg
 		.append("g")
-		.attr("id", "canvas")
+		.attr("id", "canvas");
+	var legendCanvas = svg
+		.append("g")
+		.attr("id", "legendCanvas");
 
 	function renderTiles(newDataset) {
 		//Clean old
 		d3.select("#canvas").html("");
-		//canvas.selectAll("*").remove();
+		d3.select("#legendCanvas").html("");
+
+		var zScale = d3.scaleQuantile()
+			.domain([0, d3.max(newDataset, d=>d.count)])
+		    .range(["#fff", "#ffffcc","#ffeda0", "#fed976","#feb24c", "#fd8d3c", "#fc4e2a",
+		    	"#e31a1c", "#bd0026", "#800026"]);
+
+		//// Add a legend for the color values.
+
+		var legend = legendCanvas.selectAll(".legend")
+			.data(zScale.quantiles().reverse())
+			.enter().append("g")
+			.attr("class", "legend")
+			.attr("transform", function(d, i) { return "translate(" + (w - padding+ 20) + "," + (20 + i * 20) + ")"; });
+
+
+		legend.append("rect")
+			.attr("width", 20)
+			.attr("height", 20)
+			.style("fill", zScale);
+
+		legend.append("text")
+			.attr("x", 26)
+			.attr("y", 10)
+			.attr("dy", ".35em")
+			.text(d=> `> ${Math.round(d)}`);
+
+		//legend.exit().remove();
 
 		// create range for heatmap z axis (crime count)
 		var tiles = canvas.selectAll("rect")
 			.data(newDataset)
 		
-		
 		tiles.enter()
 			.append("rect")
 			.transition()
 			.duration(0)
-			.attr("x", d => {console.log(d.year); return xScale(xMap[d.type])})
+			.attr("x", d => xScale(xMap[d.type]))
 			.attr("y", d => yScale(yMap[d.borough] + yStep))
 			.attr("width", xScale(xStep) - xScale(0))
 			.attr("height",  yScale(0) - yScale(yStep))
-			.style("fill", d => zScale(d.count))
+			.style("fill", d => {/*console.log(d); */return zScale(d.count);});
 		
 		tiles.exit().remove();
 	}
@@ -95,10 +124,7 @@ d3.csv("heatmap.csv", d => {
 		renderTiles(dataset.filter(d=> d.year == selectedYear));
 	};
 
-	var zScale = d3.scaleQuantile()
-			.domain([0, d3.max(dataset, d=>d.count)])
-		    .range(["#fff", "#ffffcc","#ffeda0", "#fed976","#feb24c", "#fd8d3c", "#fc4e2a",
-		    	"#e31a1c", "#bd0026", "#800026"]);
+	
 
 	var xScale = d3.scaleLinear()
 		.domain(d3.extent(dataset, d=> xMap[d.type]))
@@ -116,35 +142,7 @@ d3.csv("heatmap.csv", d => {
 	// render Tiles for default date	
 	renderTiles(dataset.filter(d=> d.year == defaultDate));
 
-	//// Add a legend for the color values.
-	var legend = svg.selectAll(".legend")
-		.data(zScale.quantiles().reverse())
-		.enter().append("g")
-		.attr("class", "legend")
-		.attr("transform", function(d, i) { return "translate(" + (w - padding+ 20) + "," + (20 + i * 20) + ")"; });
-
-
-	legend.append("rect")
-		.attr("width", 20)
-		.attr("height", 20)
-		.style("fill", zScale);
-
-	legend.append("text")
-		.attr("x", 26)
-		.attr("y", 10)
-		.attr("dy", ".35em")
-		.text(d=> `> ${Math.round(d)}`);
 	
-	svg.append("text")
-		.attr("class", "label")
-		.attr("x", w - padding + 20)
-		.attr("y", 10)
-		.attr("dy", ".35em")
-		.text("Count");
-
-	console.log(d3.axisBottom()
-		.scale(xScale));
-
 	const formatX = val => {var key;
 		if (val == Math.floor(val)) return;
 		Object.keys(xMap).forEach(d=> {if (xMap[d] == Math.floor(val)) { key = d}}); return key;}
@@ -176,12 +174,20 @@ d3.csv("heatmap.csv", d => {
 		.attr("transform", "translate(" + padding + ",0)")
 		.call(yAxis);
 
-	//Create legend
+	//Create title
 	svg.append("text")// add title 
 		.text("Visualizing the crime in New York city")
 		.attr("x", w/2 - padding/2)
 	    .attr("y", padding/2)
 		.attr("font-family", "sans-serif")
 		.attr("font-size", "15px")
+
+	// Legend title
+	svg.append("text")
+		.attr("class", "label")
+		.attr("x", w - padding + 20)
+		.attr("y", 10)
+		.attr("dy", ".35em")
+		.text("Count");
 
 });
