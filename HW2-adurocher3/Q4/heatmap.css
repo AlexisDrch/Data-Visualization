@@ -3,4 +3,12 @@
    width: 100px;
    height: 30px;
    border-color: coral;
+   border-radius: 20px;
+}
+
+
+
+.axis text {
+	font-family: sans-serif;
+	font-size: 11px;
 }

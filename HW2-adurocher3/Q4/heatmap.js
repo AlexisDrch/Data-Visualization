@@ -95,6 +95,8 @@ d3.csv("heatmap.csv", d => {
 			.append("rect")
 			.transition()
 			.duration(0)
+			.attr("rx", 7)
+			.attr("ry",7) 
 			.attr("x", d => xScale(xMap[d.type]))
 			.attr("y", d => yScale(yMap[d.borough] + yStep))
 			.attr("width", xScale(xStep) - xScale(0))
