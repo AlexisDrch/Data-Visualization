@@ -1,9 +1,9 @@
 yMap = {
-	Bronx : 0,
-	Brooklyn : 1,
+	Bronx : 4,
+	Brooklyn : 3,
 	Manhattan : 2,
-	Queens : 3,
-	StatenIsland: 4
+	Queens : 1,
+	'Staten Island': 0
 };
 xMap = {
 	Assault: 0,
@@ -34,7 +34,7 @@ d3.csv("heatmap.csv", d => {
 		dataset.push({'year': row.Year, 'type': row.CrimeType, 'borough': 'Brooklyn', 'count': row.Brooklyn});
 		dataset.push({'year': row.Year, 'type': row.CrimeType, 'borough': 'Manhattan', 'count': row.Manhattan});
 		dataset.push({'year': row.Year, 'type': row.CrimeType, 'borough': 'Queens', 'count': row.Queens});
-		dataset.push({'year': row.Year, 'type': row.CrimeType, 'borough': 'StatenIsland', 'count': row.StatenIsland});
+		dataset.push({'year': row.Year, 'type': row.CrimeType, 'borough': 'Staten Island', 'count': row.StatenIsland});
 	});
 
 	var w = 1000;
@@ -42,7 +42,7 @@ d3.csv("heatmap.csv", d => {
 	var padding = 100;
 	var defaultDate = 2011;
 
-	var svg = d3.select("body")
+	var svg = d3.select(".d3")
 		.append("svg")
 		.attr("width", w)
 		.attr("height", h)
@@ -50,18 +50,17 @@ d3.csv("heatmap.csv", d => {
 
 	var canvas = svg
 		.append("g")
-		.attr("id", "canvasA")
+		.attr("id", "canvas")
 
 	function renderTiles(newDataset) {
 		//Clean old
-		d3.select("#canvasA").html("");
+		d3.select("#canvas").html("");
+		//canvas.selectAll("*").remove();
 
 		// create range for heatmap z axis (crime count)
-		console.log(newDataset);
 		var tiles = canvas.selectAll("rect")
 			.data(newDataset)
 		
-		console.log(newDataset[0].year, newDataset[0].type, newDataset[0].count, zScale(newDataset[0].count))
 		
 		tiles.enter()
 			.append("rect")
@@ -78,11 +77,9 @@ d3.csv("heatmap.csv", d => {
 
 	uniqueDates = dataset.map(d => d.year).filter((d,i,arr) => arr.indexOf(d) === i);
 	
-	var dropDown = d3.select("body")
-		.append("select")
-		.attr("x", w/2)
-		.attr("y", padding/2)
+	var dropDown = d3.select("#selectYear")
     	.attr("name", "date-list")
+    	.attr("class", "select")
     	.on('change', onchange);
     	
 
@@ -98,9 +95,10 @@ d3.csv("heatmap.csv", d => {
 		renderTiles(dataset.filter(d=> d.year == selectedYear));
 	};
 
-	var zScale = d3.scaleLinear()
+	var zScale = d3.scaleQuantile()
 			.domain([0, d3.max(dataset, d=>d.count)])
-		    .range(["#FFF","#5E4FA2"]);
+		    .range(["#fff", "#ffffcc","#ffeda0", "#fed976","#feb24c", "#fd8d3c", "#fc4e2a",
+		    	"#e31a1c", "#bd0026", "#800026"]);
 
 	var xScale = d3.scaleLinear()
 		.domain(d3.extent(dataset, d=> xMap[d.type]))
@@ -108,7 +106,7 @@ d3.csv("heatmap.csv", d => {
 	var yScale = d3.scaleLinear()
 		.domain(d3.extent(dataset, d=> yMap[d.borough]))
 		.range([h - padding, padding]);
-	
+
 	// extend bucket
 	var xStep = 1,
     	yStep = 1;
@@ -117,5 +115,73 @@ d3.csv("heatmap.csv", d => {
 
 	// render Tiles for default date	
 	renderTiles(dataset.filter(d=> d.year == defaultDate));
+
+	//// Add a legend for the color values.
+	var legend = svg.selectAll(".legend")
+		.data(zScale.quantiles().reverse())
+		.enter().append("g")
+		.attr("class", "legend")
+		.attr("transform", function(d, i) { return "translate(" + (w - padding+ 20) + "," + (20 + i * 20) + ")"; });
+
+
+	legend.append("rect")
+		.attr("width", 20)
+		.attr("height", 20)
+		.style("fill", zScale);
+
+	legend.append("text")
+		.attr("x", 26)
+		.attr("y", 10)
+		.attr("dy", ".35em")
+		.text(d=> `> ${Math.round(d)}`);
+	
+	svg.append("text")
+		.attr("class", "label")
+		.attr("x", w - padding + 20)
+		.attr("y", 10)
+		.attr("dy", ".35em")
+		.text("Count");
+
+	console.log(d3.axisBottom()
+		.scale(xScale));
+
+	const formatX = val => {var key;
+		if (val == Math.floor(val)) return;
+		Object.keys(xMap).forEach(d=> {if (xMap[d] == Math.floor(val)) { key = d}}); return key;}
+	const formatY = val => {var key;
+		if (val == Math.floor(val)) return;
+		Object.keys(yMap).forEach(d=> {if (yMap[d] == Math.floor(val)) { key = d}}); return key;}
+	
+
+	// Define X axis
+	var xAxis = d3.axisBottom()
+		.scale(xScale)
+		.ticks(12)
+		.tickFormat(formatX);
+	//Define Y axis
+	var yAxis = d3.axisLeft()
+		.scale(yScale)
+		.ticks(10)
+		.tickFormat(formatY);
+
+	// Create X Axis
+	svg.append("g")
+		.attr("class", "axis")
+		.attr("transform", "translate(0," + (h - padding) + ")")
+		.call(xAxis);
+	
+	//Create Y axis
+	svg.append("g")
+		.attr("class", "axis")
+		.attr("transform", "translate(" + padding + ",0)")
+		.call(yAxis);
+
+	//Create legend
+	svg.append("text")// add title 
+		.text("Visualizing the crime in New York city")
+		.attr("x", w/2 - padding/2)
+	    .attr("y", padding/2)
+		.attr("font-family", "sans-serif")
+		.attr("font-size", "15px")
 
 });
