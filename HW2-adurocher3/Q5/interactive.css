@@ -1,0 +1,31 @@
+body {
+    font-family: "Arial", sans-serif;
+}
+
+.unselectedBar {
+    fill: gray;
+}
+
+.selectedBar {
+    fill: lightblue;
+}
+
+.axis {
+    font-size: 13px;
+    color: gray;
+}
+.graphLabel {
+    font-size: 10px;
+    color: black;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    display: none;
+}
+
+.label {
+    font-size: 13px;
+    fill:white;
+}

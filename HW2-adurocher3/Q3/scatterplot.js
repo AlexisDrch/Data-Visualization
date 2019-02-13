@@ -32,6 +32,7 @@ function scatterPlot(dataset, featureX, featureY, svg, xScale, yScale, title = '
 	   		return rScale(d[featureSized]); 
 	   } return r;})
 
+	
 	//Create polygon for cross
 	svg.selectAll("polygon")
 		.data(dataset.filter(d=>(d.IsGoodRating)))
