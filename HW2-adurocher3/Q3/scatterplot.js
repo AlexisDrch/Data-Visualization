@@ -159,6 +159,7 @@ d3.csv("movies.csv", d => {
 	*/	
 	var svg2 = d3.select("body")
 				.append("svg")
+				.attr("class", "pagebreak")
 				.attr("width", w)
 				.attr("height", h)
 				.attr("y", h);
@@ -179,6 +180,7 @@ d3.csv("movies.csv", d => {
 	*/	
 	var svg3 = d3.select("body")
 				.append("svg")
+				.attr("class", "pagebreak")
 				.attr("width", w)
 				.attr("height", h)
 				.attr("y", 2*h);
@@ -198,6 +200,7 @@ d3.csv("movies.csv", d => {
 
 	var svg4 = d3.select("body")
 				.append("svg")
+				.attr("class", "pagebreak")
 				.attr("width", w)
 				.attr("height", h)
 				.attr("y", 3*h);
@@ -218,6 +221,7 @@ d3.csv("movies.csv", d => {
 
 	var svg5 = d3.select("body")
 				.append("svg")
+				.attr("class", "pagebreak")
 				.attr("width", w)
 				.attr("height", h)
 				.attr("y", 4*h);

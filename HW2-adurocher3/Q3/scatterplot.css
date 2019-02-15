@@ -23,6 +23,7 @@
 	font-size: 11px;
 }
 
+.pagebreak { page-break-before: always; }
 
 .legend {
 	font-family: sans-serif;
