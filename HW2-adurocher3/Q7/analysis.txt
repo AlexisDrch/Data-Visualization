@@ -1,0 +1,24 @@
+1.Ease to develop for developers
+Python: Straightforward syntax, pseudo-code like.
+Tableau: No coding required. Comprehensive interface.
+D3: No straightforward syntax. Knowledge of Javascript, web-dev (html/css) required. 
+
+2.Ease to maintain the visualization
+Python: Depends on the code quality. But visualization Python libraries are not adapted to drastic changes.
+Tableau: Generic tool by definition. Flexible: Different options can be selected to adapt the final report.
+D3: Depends on the code quality. In a generic code, d3 can easily be maintained and adapated to change.
+
+4.Usability of visualization developed for end users
+Python: Not very adapted. Requires knowledge of high-level library (matplotlib, plotly).
+Tableau: Very usable. Gives high-level and relatively sofisticated overview. But relatively static.
+D3: Very usable. Especially for interactive visualization: end-users can interact with the data in a user-friendly way.   
+
+5.Scalability of visualization
+Python: Scalable for large dataset but the visualization is limited to relatively coarse aspect of the data. 
+Tableau: Not very scalable for large datasets since it needs to draw all data point. Can be optimized (pre-aggregate)
+D3: Good scaling, but limited by the browser memory. Can provide fine-grained insight (relation within data).
+
+6.System requirements to run the visualization for end users
+Python: Requires a python compiler.
+Tableau: Requires Tableau software but files can easily be exported (e.g pdg, jpeg etc.)
+D3: Requires a web browser compiler.
