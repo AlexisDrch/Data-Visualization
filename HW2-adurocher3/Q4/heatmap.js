@@ -61,23 +61,25 @@ d3.csv("heatmap.csv", d => {
 		d3.select("#legendCanvas").html("");
 
 		var zScale = d3.scaleQuantile()
-			.domain([0, d3.max(newDataset, d=>d.count)])
-		    .range(["#fff", "#ffffcc","#ffeda0", "#fed976","#feb24c", "#fd8d3c", "#fc4e2a",
+			.domain([d3.min(newDataset, d=>d.count), d3.max(newDataset, d=>d.count)])
+		    .range([ "#ffffcc","#ffeda0", "#fed976","#feb24c", "#fd8d3c", "#fc4e2a",
 		    	"#e31a1c", "#bd0026", "#800026"]);
-
+		  
 		//// Add a legend for the color values.
-
+		legend = zScale.quantiles().reverse()
+		legend.push(d3.min(newDataset, d=>d.count))
+		
 		var legend = legendCanvas.selectAll(".legend")
-			.data(zScale.quantiles().reverse())
+			.data(legend)
 			.enter().append("g")
 			.attr("class", "legend")
-			.attr("transform", function(d, i) { return "translate(" + (w - padding+ 20) + "," + (20 + i * 20) + ")"; });
+			.attr("transform", function(d, i) { return "translate(" + (w - padding+ 20) + "," + (20 + (i+1) * 20) + ")"; });
 
 
 		legend.append("rect")
 			.attr("width", 20)
 			.attr("height", 20)
-			.style("fill", zScale);
+			.style("fill", d=> {return zScale(d)});
 
 		legend.append("text")
 			.attr("x", 26)
@@ -178,7 +180,7 @@ d3.csv("heatmap.csv", d => {
 
 	//Create title
 	svg.append("text")// add title 
-		.text("Visualizing the crime in New York city")
+		.text("Visualizing Crimes in New York city")
 		.attr("x", w/2 - padding/2)
 	    .attr("y", padding/2)
 		.attr("font-family", "sans-serif")

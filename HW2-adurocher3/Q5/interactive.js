@@ -128,7 +128,6 @@ function createPlot(d) {
 		dataset.push({'date': d.replace('year_',''), 'value': pop_growth_perc[i]});
 	}, 0)
 
-	console.log(dataset);
 	var y = d3.scaleLinear()
 		.domain(d3.extent(pop_growth_perc))
 		.range([height_plot/2, 0]);

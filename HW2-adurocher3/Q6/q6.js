@@ -121,10 +121,10 @@ function ready([us]) {
 
 
 
-  /*svg.append("path")
+  map.append("path")
     .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
     .attr("class", "states")
-    .attr("d", path);*/
+    .attr("d", path);
 }
 
 

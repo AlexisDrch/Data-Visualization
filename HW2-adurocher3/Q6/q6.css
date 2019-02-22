@@ -1,8 +1,17 @@
 .title {
 	font-size: 30px;
-    color: black;
+  color: blue;
 }
 
+.counties {
+    fill: none;
+}
+
+.states {
+    fill: none;
+    stroke: #fff;
+    stroke-linejoin: round;
+}
 
 .d3-tip {
   line-height: 1;
@@ -32,3 +41,4 @@
   top: 100%;
   left: 0;
 }
+

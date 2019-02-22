@@ -18,7 +18,7 @@ function scatterPlot(dataset, featureX, featureY, svg, xScale, yScale, title = '
 		.domain([d3.min(dataset, d => d[featureSized]),
 			d3.mean(dataset, d => d[featureSized]),
 			d3.max(dataset, d => d[featureSized])])
-		.range([1, 5, 15]);
+		.range([3, 5, 15]);
 
 	svg.selectAll("circle.circle")
 	   .data(dataset.filter(d=>!(d.IsGoodRating)))
@@ -141,7 +141,7 @@ d3.csv("movies.csv", d => {
 				.attr("height", h);
 
 	var xScale_a_1 = d3.scaleLinear()
-		.domain([0, d3.max(dataset, d=> d.Rating)])
+		.domain([d3.min(dataset, d=> d.Rating), d3.max(dataset, d=> d.Rating)])
 		.range([padding, w - padding * 2]);
 
 	var yScale_a_1 = d3.scaleLinear()
