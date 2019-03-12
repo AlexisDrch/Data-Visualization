@@ -95,7 +95,7 @@ case class Row(v: String, d: Integer, c: String)
 
 val resultDF = Seq(
   Row(max_deg_in(0).toString, max_deg_in(1).toString.toInt, "i"),
-  Row(max_deg_out(0).toString, max_deg_out(1).toString.toInt, "0"),
+  Row(max_deg_out(0).toString, max_deg_out(1).toString.toInt, "o"),
   Row(max_deg_tot(1).toString, max_deg_tot(3).toString.toInt, "t")
 ).toDF()
 
