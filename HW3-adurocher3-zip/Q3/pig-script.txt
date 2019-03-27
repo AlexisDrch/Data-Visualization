@@ -1,0 +1,13 @@
+trigrams = LOAD 's3://cse6242-2019spring-trigrams-big/*' AS (trigram:chararray, year:int, occurrences:int, books:int);
+-- describe trigrams
+triFiltred = FILTER trigrams BY (occurrences >= 400 AND books >= 15);
+-- group trigrams data
+triGrouped = GROUP triFiltred BY (trigram);
+-- compute average of occurences per books
+averages = FOREACH triGrouped GENERATE FLATTEN(group),(double)SUM(triFiltred.occurrences)/SUM(triFiltred.books);
+-- order resulting by average occurence ($1) and then alphabetically ($0)
+results = ORDER averages BY $1 DESC, $0 ASC;
+-- limit to 20
+limited = LIMIT results 20;
+-- store in local output folder with tab separator
+STORE limited INTO 's3://cse6242oan-2019spring-adurocher3/output-big' USING PigStorage('\t');
