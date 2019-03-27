@@ -11,8 +11,23 @@ def entropy(class_y):
     #
     # Example:
     #    entropy([0,0,0,1,1,1,1,1,1]) = 0.92
-        
-    entropy = 0
+
+    count_0, N = 0, len(class_y)
+    if len(class_y) == 0:
+        return 0
+
+    for label in class_y:
+        # count 0s in class distribution
+        if label ==0: count_0+=1
+
+    # infer p0 from count 0 and N
+    p0 = count_0/N
+    if p0 == 0:
+        entropy = - (1 - p0)*np.log2(1 - p0)
+    elif p0 ==1:
+        entropy = - p0*np.log2(p0)
+    else:
+        entropy = - p0*np.log2(p0) - (1 - p0)*np.log2(1 - p0)
     return entropy
 
 
@@ -74,13 +89,20 @@ def partition_classes(X, y, split_attribute, split_val):
                [2, 'cc', 28],                           0,
                [4, 'cc', 32]]                           1]
                
-    ''' 
-    
-    X_left = []
-    X_right = []
-    
-    y_left = []
-    y_right = []
+    '''
+
+
+    if isinstance(X[0][split_attribute], str):
+        # categorical split attribute
+        idx_left = np.array([True if x[split_attribute] == split_val else False for x in X])
+    else:
+        # numerical split attribute
+        idx_left = np.array([True if x[split_attribute] <= split_val else False for x in X])
+
+    # respective split on X, y data with idx precomputed above
+    X_left, X_right = np.array(X)[idx_left], np.array(X)[~idx_left]
+    y_left, y_right = np.array(y)[idx_left], np.array(y)[~idx_left]
+
     
     return (X_left, X_right, y_left, y_right)
 
@@ -105,7 +127,16 @@ def information_gain(previous_y, current_y):
     info_gain = 0.45915
     """
 
-    info_gain = 0
+    prev_entropy, w_current_entropy = entropy(previous_y), 0
+    # sum all weighted entropy in each split
+    for split in current_y:
+        # weight of the split
+        w_split = len(split) / len(previous_y)
+        # weighted entropy of the split
+        w_current_entropy += w_split*entropy(split)
+
+    # info gain is the difference between previous entropy and current one
+    info_gain = prev_entropy - w_current_entropy
 
     return info_gain
     

@@ -51,10 +51,10 @@ class RandomForest(object):
         #       from the original dataset XX.
         # Note that you would also need to record the corresponding class labels
         # for the sampled records for training purposes. 
-
-        samples = [] # sampled dataset
-        labels = []  # class labels for the sampled records
-        return (samples, labels)
+        idx = np.random.choice(len(XX), n, replace=True)
+        samples = np.array(XX)[idx, :-1] # sampled dataset
+        labels = np.array(XX)[idx, -1]  # class labels for the sampled records
+        return (samples.tolist(), labels.tolist())
 
 
     def bootstrapping(self, XX):
@@ -68,8 +68,8 @@ class RandomForest(object):
     def fitting(self):
         # TODO: Train `num_trees` decision trees using the bootstraps datasets
         # and labels by calling the learn function from your DecisionTree class.
-        pass      
-
+        for tree, X, y in zip(self.decision_trees, self.bootstraps_datasets, self.bootstraps_labels):
+            tree.learn(X, y)
 
     def voting(self, X):
         y = []
@@ -81,6 +81,7 @@ class RandomForest(object):
             #   2. Predict the label using each of the above found trees.
             #   3. Use majority vote to find the final label for this recod.
             votes = []
+
             for i in range(len(self.bootstraps_datasets)):
                 dataset = self.bootstraps_datasets[i]
                 if record not in dataset:
@@ -88,14 +89,15 @@ class RandomForest(object):
                     effective_vote = OOB_tree.classify(record)
                     votes.append(effective_vote)
 
-
             counts = np.bincount(votes)
             
             if len(counts) == 0:
                 # TODO: Special case 
                 #  Handle the case where the record is not an out-of-bag sample
                 #  for any of the trees. 
-                pass
+                temp = []
+                # pick random tree in this case
+                y = np.append(y, np.random.choice([0,1], 1)[0])
             else:
                 y = np.append(y, np.argmax(counts))
 
@@ -123,10 +125,11 @@ def main():
             y.append(xline[-1])
             XX.append(xline[:])
 
+
     # TODO: Initialize according to your implementation
     # VERY IMPORTANT: Minimum forest_size should be 10
     forest_size = 10
-    
+
     # Initializing a random forest.
     randomForest = RandomForest(forest_size)
 
@@ -141,6 +144,7 @@ def main():
     # Calculating an unbiased error estimation of the random forest
     # based on out-of-bag (OOB) error estimate.
     y_predicted = randomForest.voting(X)
+    print(y_predicted)
 
     # Comparing predicted and true labels
     results = [prediction == truth for prediction, truth in zip(y_predicted, y)]
