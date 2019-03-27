@@ -33,7 +33,7 @@ class DecisionTree(object):
         X_left, X_right, y_left, y_right = X, [], y, []
         X, y = np.array(X), np.array(y)
 
-        # compare split value (mean or random) of every dimension to maximize info gain over X attributes
+        # compare split value (mean for num or random for cat) of every dimension to maximize info gain over X attributes
         for split_attribute in range(len(X[0])):
             # extract split value
             if isinstance(X[0, split_attribute], str):
