@@ -111,7 +111,7 @@ def main():
     numerical_cols = numerical_cols=set([i for i in range(0,43)]) # indices of numeric attributes (columns)
 
     # Loading data set
-    print("reading hw4-data")
+    #print("reading hw4-data")
     with open("hw4-data.csv") as f:
         for line in csv.reader(f, delimiter=","):
             xline = []
@@ -134,17 +134,17 @@ def main():
     randomForest = RandomForest(forest_size)
 
     # Creating the bootstrapping datasets
-    print("creating the bootstrap datasets")
+    #print("creating the bootstrap datasets")
     randomForest.bootstrapping(XX)
 
     # Building trees in the forest
-    print("fitting the forest")
+    #print("fitting the forest")
     randomForest.fitting()
 
     # Calculating an unbiased error estimation of the random forest
     # based on out-of-bag (OOB) error estimate.
     y_predicted = randomForest.voting(X)
-    print(y_predicted)
+    #print(y_predicted)
 
     # Comparing predicted and true labels
     results = [prediction == truth for prediction, truth in zip(y_predicted, y)]
@@ -152,8 +152,8 @@ def main():
     # Accuracy
     accuracy = float(results.count(True)) / float(len(results))
 
-    print("accuracy: %.4f" % accuracy)
-    print("OOB estimate: %.4f" % (1-accuracy))
+    #print("accuracy: %.4f" % accuracy)
+    #print("OOB estimate: %.4f" % (1-accuracy))
 
 
 if __name__ == "__main__":

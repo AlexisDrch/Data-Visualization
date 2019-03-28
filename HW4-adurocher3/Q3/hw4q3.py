@@ -30,7 +30,7 @@ random_state = 100
 # XXX
 # TODO: Split 70% of the data into training and 30% into test sets. Call them x_train, x_test, y_train and y_test.
 # Use the train_test_split method in sklearn with the parameter 'shuffle' set to true and the 'random_state' set to 100.
-x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size=0.33, shuffle=True, random_state=100)
+x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size=0.33, shuffle=True, random_state=random_state)
 # XXX
 
 
@@ -83,7 +83,6 @@ most_important, least_important = idx_feature_importances[-1], idx_feature_impor
 print(f'Most important feature is {data.columns[most_important]}, least is {data.columns[least_important]}')
 # XXX
 
-
 # XXX
 # TODO: Tune the hyper-parameters 'n_estimators' and 'max_depth'.
 #       Print the best params, using .best_params_, and print the best score, using .best_score_.
@@ -94,6 +93,14 @@ param_grid = [
 grid = GridSearchCV(clf_rf, param_grid, cv=10)
 grid.fit(x_train, y_train)
 print(grid.best_score_, grid.best_params_)
+
+# use best param combination
+clf_rf_best = RandomForestClassifier(n_estimators=200, max_depth=80)
+clf_rf_best.fit(x_train, y_train)
+# Test its accuracy on the test set using the accuracy_score method.
+y_test_pred = clf_rf_best.predict(x_test)
+testing_accuracy = accuracy_score(y_test, y_test_pred, normalize=True)
+print(f'Random Forest tuned, accuracy testing: {testing_accuracy}')
 # XXX
 
 
@@ -124,15 +131,18 @@ print(f'SVC, accuracy training: {training_accuracy} / testing: {testing_accuracy
 # TODO: Tune the hyper-parameters 'C' and 'kernel' (use rbf and linear).
 #       Print the best params, using .best_params_, and print the best score, using .best_score_.
 param_grid = [
-  {'C': [0.001, 0.01, 0.1],
+  {'C': [0.1, 1, 10],
    'kernel': ['linear', 'rbf']},
  ]
-grid = GridSearchCV(clf_svc, param_grid, cv=10)
+grid = GridSearchCV(clf_svc, param_grid, cv=10, return_train_score=True)
 grid.fit(x_train_, y_train)
 print(grid.best_score_, grid.best_params_)
 
 cv_results_ = grid.cv_results_
-print(f'{cv_results_}')
+print(f'best params mean training score {cv_results_["mean_train_score"][grid.best_index_]}')
+print(f'best params mean validation score {cv_results_["mean_test_score"][grid.best_index_]}')
+print(f'best params mean fit time {cv_results_["mean_fit_time"][grid.best_index_]}')
+
 # XXX
 
 
@@ -144,11 +154,11 @@ print(f'{cv_results_}')
 #       - Percentage of variance explained by each of the selected components
 #       - The singular values corresponding to each of the selected components.
 pca = PCA(n_components=10, svd_solver='full')
+pca.fit(x_train)
 explained_variances = pca.explained_variance_ratio_
 singular_values = pca.singular_values_
 
 print(f'explained variance {explained_variances}')
 print(f'singular values {singular_values}')
 # XXX
-
 
